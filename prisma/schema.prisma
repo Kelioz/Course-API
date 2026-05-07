@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  email     String  @unique
+  name      String?
+  password  String
+  isAproved Boolean @default(false)
+
+  role     Role @default(User)
+  modules  Module[]
+  
+  @@map("user")
+}
+
+enum Role {
+  Admin
+  User
+}
+
+model Module {
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  title       String
+  description String?
+  courses     Course[]
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+}
+
+model Course {
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  title       String
+  description String?
+  steps       Step[]
+  module      Module   @relation(fields: [moduleId], references: [id])
+  moduleId    String   @map("module_id") @db.Uuid 
+}
+
+model Step {
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  isComplete  Boolean  
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String   @map("course_id") @db.Uuid 
+}
+
+model Book {
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  title       String
+  description String?
+}
