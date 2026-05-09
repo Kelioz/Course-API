@@ -6,14 +6,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/createBook.dto';
 import { BookDTO } from './dto/Book.dto';
 import { BooksDTO } from './dto/Books.dto';
-import { ApiParam, ApiResponse } from '@nestjs/swagger';
-import { GetBooksParams } from './dto/get-book.param';
+import { ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { GetAllBooksQuery, GetBooksParams } from './dto/get-book.param';
 import { Roles } from 'src/auth/decorators/role-decorator';
 import { AppRole } from 'src/auth/decorators/current-user.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -24,9 +25,16 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
+  @ApiQuery({
+    name: 'title',
+    type: String,
+    required: false,
+    description: 'Поиск по названию книги',
+    example: 'кНига',
+  })
   @ApiResponse({ type: BookDTO, isArray: true })
-  async getAllBooks(): Promise<BooksDTO> {
-    return this.bookService.getAllBooks();
+  async getAllBooks(@Query() params?: GetAllBooksQuery): Promise<BooksDTO> {
+    return this.bookService.getAllBooks(params);
   }
 
   @Get(':id')

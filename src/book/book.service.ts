@@ -4,16 +4,21 @@ import { CreateBookDto } from './dto/createBook.dto';
 import { BookDTO } from './dto/Book.dto';
 import { BooksDTO } from './dto/Books.dto';
 import { randomUUID } from 'crypto';
-import { Roles } from 'src/auth/decorators/role-decorator';
-import { AppRole } from 'src/auth/decorators/current-user.decorator';
+import { GetAllBooksQuery } from './dto/get-book.param';
 
 @Injectable()
 export class BookService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllBooks(): Promise<BooksDTO> {
-    return this.prisma.book.findMany({ orderBy: { createdAt: 'asc' } });
+  async getAllBooks(params?: GetAllBooksQuery): Promise<BooksDTO> {
+    if (params?.title) {
+      return this.prisma.book.findMany({
+        orderBy: { createdAt: 'asc' },
+        where: { title: { contains: params.title } },
+      });
+    } else return this.prisma.book.findMany({ orderBy: { createdAt: 'asc' } });
   }
+
   async getBook(id: string): Promise<BookDTO> {
     const book = await this.prisma.book.findFirst({ where: { id: id } });
     if (!book) {
@@ -21,6 +26,7 @@ export class BookService {
     }
     return book;
   }
+
   async putBook(id: string, data: CreateBookDto): Promise<BookDTO> {
     const book = await this.prisma.book.update({
       where: { id: id },

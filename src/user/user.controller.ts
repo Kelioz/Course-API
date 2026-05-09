@@ -32,7 +32,7 @@ export class UserController {
 
   @Get('profile')
   @Auth()
-  @ApiResponse({ type: Object })
+  @ApiResponse({ type: Promise<User> })
   async getProfile(@CurrentUser('id') id: string) {
     const user = await this.userService.getById(id);
     return user;
@@ -42,7 +42,6 @@ export class UserController {
   @Auth()
   @ApiParam({ name: 'email', type: String })
   async getUserByEmail(@Param('email') email: string): Promise<User> {
-    console.log('Hui');
     return this.userService.getByEmail(email);
   }
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class GetBooksParams {
   @ApiProperty({
@@ -8,4 +9,17 @@ export class GetBooksParams {
   })
   @IsUUID()
   id: string;
+}
+
+export class GetAllBooksQuery {
+  @ApiProperty({
+    description: 'Название книги',
+    required: false,
+    example: 'кНига',
+    type: 'string',
+  })
+  @IsOptional()
+  @IsString()
+  @Transform(({ value }) => (value as string)?.trim())
+  title?: string;
 }
