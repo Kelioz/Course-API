@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user';
 import { User } from '@prisma/client';
@@ -10,8 +14,19 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async getById(id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: id } });
-    console.log(user);
+    const user = await this.prisma.user.findUnique({
+      where: { id: id },
+      select: {
+        id: true,
+        name: true,
+        isAproved: true,
+        createdAt: true,
+        email: true,
+        modules: true,
+        updatedAt: true,
+        role: true,
+      },
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -35,6 +50,8 @@ export class UserService {
   async postAproveUser(id: string) {
     const user = await this.getById(id);
     if (!user) throw new NotFoundException('User not found');
+    if (user.isAproved)
+      throw new ForbiddenException('Пользователь уже одобрен');
     return this.prisma.user.update({
       where: { id: id },
       data: { isAproved: true },

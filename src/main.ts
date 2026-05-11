@@ -40,6 +40,8 @@ async function bootstrap() {
       showRequestDuration: true,
     },
   });
+  document.tags = [{ name: 'Auth', description: 'Ручки аунтефикации' }];
+  document.info = { title: 'Просто учебный проект', version: '0.1' };
   app.use('/api-docs-yaml', (req, res: Response) => {
     res.header('Content-Type', 'application/x-yaml');
     res.send(YAML.stringify(document));

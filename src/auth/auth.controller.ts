@@ -9,9 +9,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, User } from './dto/auth.dto';
 import { type Request, type Response } from 'express';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
@@ -23,7 +23,8 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('login')
-  @ApiResponse({ type: Response })
+  @ApiResponse({ type: User })
+  @ApiOperation({ operationId: 'login' })
   async login(
     @Body() data: AuthDto,
     @Res({ passthrough: true }) res: Response,
@@ -38,7 +39,8 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('register')
-  @ApiResponse({ type: Response })
+  @ApiResponse({ type: User })
+  @ApiOperation({ operationId: 'register' })
   async register(
     @Body() data: AuthDto,
     @Res({ passthrough: true }) res: Response,
@@ -49,7 +51,12 @@ export class AuthController {
   }
 
   @Post('login/access-token')
-  @ApiResponse({ type: Response })
+  @ApiResponse({ type: User })
+  @ApiOperation({
+    operationId: 'getNewToken',
+    description: 'Получение нового токена при устаривании прошлого',
+  })
+  @ApiOperation({ operationId: 'logout' })
   async getNewTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -71,9 +78,9 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response) {
+  logout(@Res({ passthrough: true }) res: Response) {
     this.authService.removeRefreshTokenToResponse(res);
 
-    return { message: 'logout complete' };
+    return { message: 'Выход успешен' };
   }
 }

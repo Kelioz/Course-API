@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiResponse, ApiBody, ApiParam, ApiOperation } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 @Controller('user')
@@ -13,6 +13,7 @@ export class UserController {
   @Post('create')
   @Auth()
   @ApiBody({ type: CreateUserDto })
+  @ApiOperation({ operationId: 'createUser' })
   async createUser(@Body() data: CreateUserDto) {
     return this.userService.createUser(data);
   }
@@ -20,12 +21,14 @@ export class UserController {
   @Post('approve/:id')
   @Auth()
   @ApiParam({ name: 'id', type: String })
+  @ApiOperation({ operationId: 'approveUser' })
   async postApproveUser(@Param('id') id: string) {
     return this.userService.postAproveUser(id);
   }
 
   @Get('all/users')
   @Auth()
+  @ApiOperation({ operationId: 'getUserById' })
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
@@ -33,6 +36,7 @@ export class UserController {
   @Get('profile')
   @Auth()
   @ApiResponse({ type: Promise<User> })
+  @ApiOperation({ operationId: 'getProfile' })
   async getProfile(@CurrentUser('id') id: string) {
     const user = await this.userService.getById(id);
     return user;
@@ -40,6 +44,7 @@ export class UserController {
 
   @Get(':email')
   @Auth()
+  @ApiOperation({ operationId: 'getUserByEmail' })
   @ApiParam({ name: 'email', type: String })
   async getUserByEmail(@Param('email') email: string): Promise<User> {
     return this.userService.getByEmail(email);

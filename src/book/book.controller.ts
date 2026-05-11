@@ -13,7 +13,7 @@ import { BookService } from './book.service';
 import { CreateBookDto } from './dto/createBook.dto';
 import { BookDTO } from './dto/Book.dto';
 import { BooksDTO } from './dto/Books.dto';
-import { ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { GetAllBooksQuery, GetBooksParams } from './dto/get-book.param';
 import { Roles } from 'src/auth/decorators/role-decorator';
 import { AppRole } from 'src/auth/decorators/current-user.decorator';
@@ -33,6 +33,7 @@ export class BookController {
     example: 'кНига',
   })
   @ApiResponse({ type: BookDTO, isArray: true })
+  @ApiOperation({ operationId: 'getAllBooks' })
   async getAllBooks(@Query() params?: GetAllBooksQuery): Promise<BooksDTO> {
     return this.bookService.getAllBooks(params);
   }
@@ -46,6 +47,7 @@ export class BookController {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiResponse({ type: BookDTO })
+  @ApiOperation({ operationId: 'getBookById' })
   async getBook(@Param() params: GetBooksParams): Promise<BookDTO> {
     return this.bookService.getBook(params.id);
   }
@@ -59,6 +61,7 @@ export class BookController {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiResponse({ type: BookDTO })
+  @ApiOperation({ operationId: 'updateBook' })
   async putBook(
     @Param() params: GetBooksParams,
     @Body() data: CreateBookDto,
@@ -68,6 +71,7 @@ export class BookController {
 
   @Post()
   @ApiResponse({ type: BookDTO })
+  @ApiOperation({ operationId: 'createBook' })
   async createBook(@Body() dto: CreateBookDto): Promise<BookDTO> {
     return this.bookService.createBook(dto);
   }
@@ -81,6 +85,7 @@ export class BookController {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @Roles(AppRole.ADMIN)
+  @ApiOperation({ operationId: 'deleteBook' })
   async deleteBook(@Param() params: GetBooksParams) {
     return this.bookService.deleteBook(params.id);
   }
