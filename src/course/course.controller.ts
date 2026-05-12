@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CourseService } from './course.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { AllCourses } from './dto/getAllCourses';
 import { Course } from './dto/getCourses';
-import { CreateCourseBody } from './dto/createModuleBody';
+import { CreateCourseBody } from './dto/createCourseBody';
+import { UpdateCourseParams } from './dto/putCourseParams';
+import { UpdateCourseBody } from './dto/putCourseBody';
 
 @Controller('course')
 @UseGuards(RolesGuard)
@@ -23,6 +33,17 @@ export class CourseController {
   @ApiOperation({ operationId: 'createCourse' })
   async createCourse(@Body() data: CreateCourseBody) {
     return this.courseService.createCourse(data);
+  }
+
+  @Put(':id')
+  @ApiResponse({ type: Course })
+  @ApiOperation({ operationId: 'updateCourse' })
+  @ApiParam({ name: 'id', type: String })
+  async putCourse(
+    @Param() params: UpdateCourseParams,
+    @Body() data: UpdateCourseBody,
+  ) {
+    return await this.courseService.updateCourse(params, data);
   }
 
   @Get(':id')

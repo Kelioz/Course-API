@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateCourseBody } from './dto/createModuleBody';
+import { CreateCourseBody } from './dto/createCourseBody';
 import { randomUUID } from 'crypto';
 import { UserService } from 'src/user/user.service';
+import { UpdateCourseParams } from './dto/putCourseParams';
+import { UpdateCourseBody } from './dto/putCourseBody';
 
 @Injectable()
 export class CourseService {
@@ -29,9 +31,7 @@ export class CourseService {
     if (data.userId) {
       user = await this.userService.getById(data.userId);
     }
-    if (!user) {
-      throw new NotFoundException('Не удалось найти пользователя с таким id');
-    }
+
     const course = await this.prisma.course.create({
       data: {
         id: randomUUID(),
@@ -43,7 +43,20 @@ export class CourseService {
 
     return course;
   }
-  async updateCourse() {}
+  async updateCourse(params: UpdateCourseParams, data: UpdateCourseBody) {
+    const exisitingCourse = await this.getCoursesById(params.id);
+    if (!exisitingCourse) throw new NotFoundException('Курс не найден');
+
+    const course = await this.prisma.course.update({
+      where: { id: params.id },
+      data: {
+        title: data.title,
+        description: data.description,
+      },
+    });
+
+    return course;
+  }
   async deleteCourse(moduleId: string) {
     return await this.prisma.course.delete({ where: { id: moduleId } });
   }
