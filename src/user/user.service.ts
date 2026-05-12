@@ -22,14 +22,14 @@ export class UserService {
         isAproved: true,
         createdAt: true,
         email: true,
-        modules: true,
+        courses: true,
         updatedAt: true,
         role: true,
       },
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Не удалось найти пользователя с таким id');
     }
 
     return user;

@@ -5,9 +5,16 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { CourseModule } from './course/course.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), BookModule, AuthModule, UserModule],
+  imports: [
+    ConfigModule.forRoot(),
+    BookModule,
+    AuthModule,
+    UserModule,
+    CourseModule,
+  ],
   providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule {}

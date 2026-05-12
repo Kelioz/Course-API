@@ -23,7 +23,8 @@ model User {
   isAproved Boolean @default(false)
 
   role     Role @default(User)
-  modules  Module[]
+  courses  Course[]  // курсы, которые создал пользователь (преподаватель)
+  enrollments    Enrollment[]      // курсы, на которые записан пользователь
   
   @@map("user")
 }
@@ -33,35 +34,84 @@ enum Role {
   User
 }
 
-model Module {
-  id          String   @id @default(ulid()) @db.Uuid
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  title       String
-  description String?
-  courses     Course[]
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String   @map("user_id")
-}
-
 model Course {
   id          String   @id @default(ulid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   title       String
   description String?
-  steps       Step[]
-  module      Module   @relation(fields: [moduleId], references: [id])
-  moduleId    String   @map("module_id") @db.Uuid 
+  module      Module[] 
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId      String?   @map("user_id")
+   enrollments     Enrollment[]   // кто записан на курс
+  
+}
+model Enrollment {
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String   @map("course_id") @db.Uuid
+  
+  progress    Float    @default(0) // процент прохождения (0-100)
+  status      EnrollmentStatus @default(InProgress)
+  
+  completedSteps  CompletedStep[]
+  
+  @@unique([userId, courseId]) // один пользователь может быть записан на курс только один раз
+}
+model CompletedStep {
+  id          String   @id @default(ulid()) @db.Uuid
+  completedAt DateTime @default(now())
+  
+  enrollment  Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String    @map("enrollment_id")
+  step        Step      @relation(fields: [stepId], references: [id])
+  stepId      String    @map("step_id") @db.Uuid
+  
+  @@unique([enrollmentId, stepId]) // шаг может быть выполнен только один раз в рамках одного зачисления
+}
+model Module { 
+  id          String   @id @default(ulid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  title       String
+  description String?
+  step        Step[] 
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String   @map("course_id") @db.Uuid 
 }
 
 model Step {
   id          String   @id @default(ulid()) @db.Uuid
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  isComplete  Boolean  
-  course      Course   @relation(fields: [courseId], references: [id])
-  courseId    String   @map("course_id") @db.Uuid 
+  
+  title       String
+  description String?
+  order       Int      @default(0) // порядок шага в модуле
+  content     String?  // содержимое шага (текст, видео, тест)
+  type        StepType @default(Text) // тип шага
+  
+  module      Module   @relation(fields: [moduleId], references: [id])
+  moduleId    String   @map("module_id") @db.Uuid
+  
+  completedBy CompletedStep[]
+}
+
+enum EnrollmentStatus {
+  InProgress
+  Completed
+  Dropped
+}
+
+enum StepType {
+  Text
+  Video
+  Quiz
+  Task
 }
 
 model Book {

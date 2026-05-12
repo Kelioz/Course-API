@@ -8,9 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { AuthDto, User } from './dto/auth.dto';
 import { verify } from 'argon2';
-import { User } from '@prisma/client';
 import { Response } from 'express';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Injectable()
 export class AuthService {
