@@ -15,6 +15,7 @@ import { Course } from './dto/getCourses';
 import { CreateCourseBody } from './dto/createCourseBody';
 import { UpdateCourseParams } from './dto/putCourseParams';
 import { UpdateCourseBody } from './dto/putCourseBody';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('course')
 @UseGuards(RolesGuard)
@@ -26,6 +27,16 @@ export class CourseController {
   @ApiOperation({ operationId: 'getAllCourses' })
   async getAllCcourses() {
     return await this.courseService.getAllCourses();
+  }
+
+  @Get('my-courses')
+  @ApiOperation({
+    operationId: 'getCoursesByUsers',
+    summary: 'Получение всех курсов созданных пользователем',
+  })
+  @ApiResponse({ type: AllCourses, isArray: true })
+  async getCoursesByUsers(@CurrentUser('id') id: string) {
+    return await this.courseService.getCoursesByUserId(id);
   }
 
   @Post()

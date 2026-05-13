@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { CourseModule } from './course/course.module';
+import { EnrollmentModule } from './Enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CourseModule } from './course/course.module';
     AuthModule,
     UserModule,
     CourseModule,
+    EnrollmentModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
 })

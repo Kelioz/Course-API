@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateCourseBody } from './dto/createCourseBody';
 import { randomUUID } from 'crypto';
@@ -57,7 +61,20 @@ export class CourseService {
 
     return course;
   }
-  async deleteCourse(moduleId: string) {
-    return await this.prisma.course.delete({ where: { id: moduleId } });
+  async deleteCourse(courseId: string) {
+    const existingCourse = await this.getCoursesById(courseId);
+    if (!existingCourse) throw new NotFoundException('Курс не найден');
+
+    const enrollments = await this.prisma.enrollment.count({
+      where: { courseId: courseId },
+    });
+
+    if (enrollments > 0) {
+      throw new ConflictException(
+        'Cannot delete course with active enrollments',
+      );
+    }
+
+    return await this.prisma.course.delete({ where: { id: courseId } });
   }
 }
