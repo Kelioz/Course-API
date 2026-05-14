@@ -19,6 +19,7 @@ import {
   CourseWithProgressDto,
 } from './dto/enrollment.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('enrollment')
 @Controller('enrollment')
@@ -34,6 +35,7 @@ export class EnrollmentController {
     description:
       'Возвращает список всех курсов, на которые записан текущий пользователь',
   })
+  @Auth()
   async getAllEnrollmentCoursesByUser(@CurrentUser('id') id: string) {
     return await this.enrollmentService.getAllEnrollmentCoursesByUser(id);
   }
@@ -46,6 +48,7 @@ export class EnrollmentController {
     description: 'Создает новую запись пользователя на курс',
   })
   @ApiParam({ name: 'courseId', type: String, description: 'ID курса' })
+  @Auth()
   async createEnrollmentCourse(
     @CurrentUser('id') userId: string,
     @Param('courseId') courseId: string,
@@ -65,6 +68,7 @@ export class EnrollmentController {
     description: 'Удаляет запись пользователя на курс',
   })
   @ApiParam({ name: 'courseId', type: String, description: 'ID курса' })
+  @Auth()
   async deleteEnrollmentCourse(
     @CurrentUser('id') userId: string,
     @Param('courseId') courseId: string,
@@ -84,6 +88,7 @@ export class EnrollmentController {
       'Возвращает информацию о прогрессе пользователя в конкретном курсе',
   })
   @ApiParam({ name: 'courseId', type: String, description: 'ID курса' })
+  @Auth()
   async getUserProgressInCourse(
     @CurrentUser('id') userId: string,
     @Param('courseId') courseId: string,
@@ -102,6 +107,7 @@ export class EnrollmentController {
     description: 'Возвращает список всех выполненных шагов в конкретном курсе',
   })
   @ApiParam({ name: 'courseId', type: String, description: 'ID курса' })
+  @Auth()
   async getCompletedSteps(
     @CurrentUser('id') userId: string,
     @Param('courseId') courseId: string,
@@ -117,6 +123,7 @@ export class EnrollmentController {
     description: 'Создает запись о выполнении шага пользователем',
   })
   @ApiParam({ name: 'stepId', type: String, description: 'ID шага' })
+  @Auth()
   async completeStep(
     @CurrentUser('id') userId: string,
     @Param('stepId') stepId: string,
@@ -133,6 +140,7 @@ export class EnrollmentController {
     description: 'Удаляет запись о выполнении шага',
   })
   @ApiParam({ name: 'stepId', type: String, description: 'ID шага' })
+  @Auth()
   async uncompleteStep(
     @CurrentUser('id') userId: string,
     @Param('stepId') stepId: string,
@@ -148,6 +156,7 @@ export class EnrollmentController {
     description:
       'Возвращает агрегированную статистику по всем курсам пользователя',
   })
+  @Auth()
   async getUserStats(@CurrentUser('id') userId: string) {
     return await this.enrollmentService.getUserStats(userId);
   }
@@ -161,6 +170,7 @@ export class EnrollmentController {
       'Возвращает подробную информацию о курсе с прогрессом пользователя по каждому модулю и шагу',
   })
   @ApiParam({ name: 'courseId', type: String })
+  @Auth()
   async getCourseWithUserProgress(
     @CurrentUser('id') userId: string,
     @Param('courseId') courseId: string,

@@ -16,6 +16,7 @@ import { CreateCourseBody } from './dto/createCourseBody';
 import { UpdateCourseParams } from './dto/putCourseParams';
 import { UpdateCourseBody } from './dto/putCourseBody';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @Controller('course')
 @UseGuards(RolesGuard)
@@ -25,7 +26,7 @@ export class CourseController {
   @Get()
   @ApiResponse({ type: AllCourses, isArray: true })
   @ApiOperation({ operationId: 'getAllCourses' })
-  async getAllCcourses() {
+  async getAllCourses() {
     return await this.courseService.getAllCourses();
   }
 
@@ -35,6 +36,7 @@ export class CourseController {
     summary: 'Получение всех курсов созданных пользователем',
   })
   @ApiResponse({ type: AllCourses, isArray: true })
+  @Auth()
   async getCoursesByUsers(@CurrentUser('id') id: string) {
     return await this.courseService.getCoursesByUserId(id);
   }
@@ -42,6 +44,7 @@ export class CourseController {
   @Post()
   @ApiResponse({ type: Course })
   @ApiOperation({ operationId: 'createCourse' })
+  @Auth()
   async createCourse(@Body() data: CreateCourseBody) {
     return this.courseService.createCourse(data);
   }
@@ -50,6 +53,7 @@ export class CourseController {
   @ApiResponse({ type: Course })
   @ApiOperation({ operationId: 'updateCourse' })
   @ApiParam({ name: 'id', type: String })
+  @Auth()
   async putCourse(
     @Param() params: UpdateCourseParams,
     @Body() data: UpdateCourseBody,
@@ -59,9 +63,10 @@ export class CourseController {
 
   @Get(':id')
   @ApiResponse({ type: Course })
-  @ApiOperation({ operationId: 'getCcourseById' })
+  @ApiOperation({ operationId: 'getCourseById' })
   @ApiParam({ name: 'id', type: String })
-  async getCcourseById(@Param('id') id: string) {
+  @Auth()
+  async getCurseById(@Param('id') id: string) {
     return await this.courseService.getCoursesById(id);
   }
 }

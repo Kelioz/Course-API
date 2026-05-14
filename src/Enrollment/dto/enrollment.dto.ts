@@ -190,7 +190,7 @@ export class CourseWithProgressDto {
   @ApiProperty()
   title!: string;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: false, nullable: true, type: String })
   description?: string | null;
 
   @ApiProperty()
@@ -208,7 +208,7 @@ export class CourseWithProgressDto {
   @ApiProperty()
   canEnroll!: boolean;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: false, nullable: true, type: Number })
   progress?: number | null;
 
   @ApiProperty({

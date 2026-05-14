@@ -36,7 +36,7 @@ enum Role {
 }
 
 model Course {
-  id          String   @id @default(ulid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   title       String
@@ -48,7 +48,7 @@ model Course {
 }
 
 model Enrollment {
-  id          String   @id @default(ulid()) @db.Uuid  
+  id          String   @id @default(uuid()) @db.Uuid  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -67,7 +67,7 @@ model Enrollment {
 }
 
 model CompletedStep {
-  id          String   @id @default(ulid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   completedAt DateTime @default(now())
   
   enrollment  Enrollment @relation(fields: [enrollmentId], references: [id])
@@ -80,7 +80,7 @@ model CompletedStep {
 }
 
 model Module { 
-  id          String   @id @default(ulid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   title       String
@@ -91,7 +91,7 @@ model Module {
 }
 
 model Step {
-  id          String   @id @default(ulid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   
@@ -121,7 +121,7 @@ enum StepType {
 }
 
 model Book {
-  id          String   @id @default(ulid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   title       String
